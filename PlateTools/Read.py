@@ -42,7 +42,7 @@ class Read(object):
         """
         self.plate = plate
         self.data_np = numpy.empty((self.plate.num_rows, self.plate.num_columns))
-        print self.data_np
+        #print self.data_np
         self.data = []
         self.info = {}
 
