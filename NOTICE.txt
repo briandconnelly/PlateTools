@@ -1,0 +1,9 @@
+PlateTools - Python tools for reading, manipulating, and analyzing microplate data
+
+Copyright 2011 PlateTools Developers
+
+Created By: Brian D. Connelly
+Contributers: Brian D. Connelly
+
+Released under the Apache License, Version 2.0.  For more information, see
+LICENSE.txt
