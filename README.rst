@@ -14,7 +14,7 @@ PlateTools requires numpy_, scipy_, and matplotlib_.
 
 License:
 --------
-Seeds is released under the `Apache License, Version 2.0`__.  For more
+PlateTools is released under the `Apache License, Version 2.0`__.  For more
 information, see the files LICENSE.txt_ and NOTICE.txt_.
 
 
