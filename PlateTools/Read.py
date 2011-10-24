@@ -12,6 +12,7 @@ temperature) specific to a particular machine or experiment.
 __author__ = "Brian Connelly <bdc@msu.edu>"
 __credits__ = "Brian Connelly"
 
+import csv
 import numpy
 import sys
 
@@ -41,15 +42,15 @@ class Read(object):
 
         """
         self.plate = plate
-        self.data_np = numpy.empty((self.plate.num_rows, self.plate.num_columns))
-        #print self.data_np
-        self.data = []
+        self.data = None
         self.info = {}
 
-    def csv(fp=sys.stdout):
+    def csv(self, fp=sys.stdout):
         """ Print well data in CSV format """
-        pass
+        writer = csv.writer(fp)
+        for row in self.data:
+            writer.writerow(row)
 
-    def pretty_print(fp=sys.stdout):
+    def pretty_print(self, fp=sys.stdout):
         """ Print a nice representation of the read """
         pass

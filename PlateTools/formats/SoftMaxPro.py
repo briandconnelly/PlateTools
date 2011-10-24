@@ -4,6 +4,7 @@
 __author__ = "Brian Connelly <bdc@msu.edu>"
 __version__ = 0.1
 
+import numpy
 import re
 
 from PlateTools.Read import *
@@ -309,7 +310,7 @@ class Experiment(object):
                 else:
                     # We've reached the end of a read.  Append the data to the set of reads if bad_data==False
                     if not bad_data:
-                        R.data = data
+                        R.data = numpy.array(data)
                         P.add_read(R)
                 continue
 

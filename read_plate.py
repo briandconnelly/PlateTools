@@ -87,8 +87,12 @@ def main():
 
         for p in target_plates:
             if args.transpose:
+                # Hmmmmm.
                 pass
-            # TODO - print the data.  default to CSV.
+            for r in p.reads:
+                print("{0}".format(p))
+                r.csv()
+                print("")
 
         # TODO: do the same for cuvettes
 
