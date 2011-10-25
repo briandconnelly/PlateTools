@@ -45,12 +45,13 @@ class Read(object):
         self.data = None
         self.info = {}
 
-    def csv(self, fp=sys.stdout):
+    def csv(self, fp=sys.stdout, delimiter=','):
         """ Print well data in CSV format """
-        writer = csv.writer(fp)
+        writer = csv.writer(fp, delimiter=delimiter)
         for row in self.data:
             writer.writerow(row)
 
-    def pretty_print(self, fp=sys.stdout):
+    def pretty(self, fp=sys.stdout):
         """ Print a nice representation of the read """
+        # TODO: implement
         pass

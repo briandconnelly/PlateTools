@@ -7,17 +7,10 @@
 __author__ = "Brian Connelly <bdc@msu.edu>"
 __version__ = 0.1
 
-try:
-    import numpy
-    HAS_NUMPY = True
-except ImportError:
-    HAS_NUMPY = False
-    pass
-
-import PlateTools
 from PlateTools.formats import SoftMaxPro
 
 import argparse
+import numpy
 import sys
 
 
@@ -30,9 +23,8 @@ def main():
     parser.add_argument('-i', '--info', action='store_true', default=False, help='display information about the experiment or selected plate/cuvette')
     parser.add_argument('-o', '--outfile', type=argparse.FileType('w'), default=sys.stdout, help='write data to given file')
     parser.add_argument('-p', '--plate', nargs='+', help='use specific plate(s)', default=None)
-    #parser.add_argument('--cuvette_info', metavar='C', help='display information about the given cuvette')
-    if HAS_NUMPY:
-        parser.add_argument('-T', '--transpose', action='store_true', default=False, help='transpose resulting data')
+    parser.add_argument('-P', '--pretty', action='store_true', default=False, help='display read data as a formatted table')
+    parser.add_argument('-T', '--transpose', action='store_true', default=False, help='transpose resulting data')
     parser.add_argument('-v', '--version', action='version', version='%(prog)s {0}'.format(__version__))
     args = parser.parse_args()
     
@@ -48,14 +40,20 @@ def main():
                     p.print_information()
                 except KeyError as err:
                     print("Error: Plate '{0}' does not exist in experiment".format(p))
+                else:
+                    p.print_information()
         elif args.cuvette and len(args.cuvette) > 0:
             for c in args.cuvette:
                 # TODO: implment
                 pass
         elif args.group and len(args.group) > 0:
             for g in args.group:
-                # TODO: implment
-                pass
+                try:
+                    group = experiment.groups[g]
+                except KeyError as err:
+                    print("Error: Group '{0}' does not exist in experiment".format(g))
+                else:
+                    group.print_information()
         else:
             for n in experiment.notes:
                 print('{0}: {1}'.format('Note', n))
@@ -68,6 +66,11 @@ def main():
             num_cuvettes = len(experiment.cuvettes)
             print('{0}: {1}'.format('Number of Cuvettes', num_cuvettes))
             for k,v in experiment.cuvettes.iteritems():
+                print("\t* {0}".format(v))
+
+            num_groups = len(experiment.groups)
+            print('{0}: {1}'.format('Number of Groups', num_groups))
+            for k,v in experiment.groups.iteritems():
                 print("\t* {0}".format(v))
 
             # TODO: display groups info
@@ -91,7 +94,10 @@ def main():
                 pass
             for r in p.reads:
                 print("{0}".format(p))
-                r.csv()
+                if args.pretty:
+                    r.pretty()
+                else:
+                    r.csv(fp=args.outfile)
                 print("")
 
         # TODO: do the same for cuvettes

@@ -5,20 +5,79 @@ __author__ = "Brian Connelly <bdc@msu.edu>"
 __version__ = 0.1
 
 import numpy
+from scipy import stats
 import re
 
 from PlateTools.Read import *
 from PlateTools.Plate import *
 
-class Note(object):
+class SMPNote(object):
     def __init__(self, note):
         self.note = note
     def __str__(self):
         return self.note
 
-class PlateRead(Read):
+class SMPGroupSample(object):
+    def __init__(self, name, group):
+        self.name = name
+        self.group = group
+        self.values = []
+    def __str__(self):
+        num_values = len(self.values)
+        valstring = "value"
+        if num_values != 1:
+            valstring += 's'
+        return "Group '{gn}' Sample '{sn}' with {v} {vs}".format(gn=self.group.name, sn=self.name, v=num_values, vs=valstring)
+    def add_value(self, val_tuple):
+        self.values.append(val_tuple)
+    def print_information(self):
+        allvals = []
+
+        print(self)
+        for (well, value) in self.values:
+            allvals.append(value)
+            print("\tWell: {well}\tValue: {value}".format(well=well, value=value))
+        print("")
+        print("\tMean: {m}".format(m=numpy.mean(allvals)))
+        print("\tStandard Deviation: {sd}".format(sd=numpy.std(allvals)))
+        print("\tStandard Error: {se}".format(se=stats.sem(allvals)))
+        print("")
+
+class SMPGroup(object):
+    def __init__(self, name):
+        self.name = name
+        self.samples = []
+    def __str__(self):
+        num_samples = len(self.samples)
+        samplestring = "sample"
+        if num_samples != 1:
+            samplestring += 's'
+        return "Group '{g}' with {s} {ss}".format(g=self.name, s=num_samples, ss=samplestring)
+    def add_sample(self, sample):
+        self.samples.append(sample)
+    def print_information(self):
+        print(self)
+        for s in self.samples:
+            num_values = len(s.values)
+            valstring = "value"
+            if num_values != 1:
+                valstring += 's'
+            print("\tSample '{sn}' with {v} {vs}:".format(sn=s.name, v=num_values, vs=valstring))
+
+            allvals = []
+            for (well, value) in s.values:
+                allvals.append(value)
+                print("\t\tWell: {well}\tValue: {val}".format(well=well, val=value))
+            print("")
+            print("\t\tMean: {m}".format(m=numpy.mean(allvals)))
+            print("\t\tStandard Deviation: {sd}".format(sd=numpy.std(allvals)))
+            print("\t\tStandard Error: {se}".format(se=stats.sem(allvals)))
+            print("")
+
+
+class SMPPlateRead(Read):
     def __init__(self, plate):
-        super(PlateRead, self).__init__(plate)
+        super(SMPPlateRead, self).__init__(plate)
         self.info['time'] = None
         self.info['temperature'] = None
         self.data = None
@@ -28,7 +87,7 @@ class PlateRead(Read):
                                                                        self.info['time'],
                                                                        self.info['temperature'])
 
-class Plate(Plate):
+class SMPPlate(Plate):
     info_fields = {'name': 'Name',
                    'export_version': 'Export Version',
                    'export_format': 'Export Format',
@@ -61,7 +120,7 @@ class Plate(Plate):
                    'time_tags': 'Time Tags'}
 
     def __init__(self, num_wells):
-        super(Plate, self).__init__(num_wells=num_wells)
+        super(SMPPlate, self).__init__(num_wells=num_wells)
 
     def __str__(self):
         num_reads = len(self.reads)
@@ -93,7 +152,7 @@ class Experiment(object):
         self.notes = []
         self.plates = {}
         self.cuvettes = {}
-        self.groups = []
+        self.groups = {}
         self.read_file(fp)
 
     def __str__(self):
@@ -132,13 +191,32 @@ class Experiment(object):
         for line in block[1:]:
             note += line.rstrip()
 
-        N = Note(note)
+        N = SMPNote(note)
         return N
 
     def parse_group_block(self, block):
         """ Parse a Group block """
-        # TODO: implement
-        print("Warning: Groups are not supported yet.  Skipping block.")
+        for line in block:
+            line_tokens = line.split('\t')
+
+            if line_tokens[0] == "Group:":
+                g = SMPGroup(line_tokens[1])
+            elif line_tokens[0] == "Sample":
+                s = None
+            else:
+                if len(line_tokens) == 5:
+                    if s:
+                        g.add_sample(s)
+                    s = SMPGroupSample(name=line_tokens[0], group=g)
+                    s.add_value((line_tokens[1], float(line_tokens[3])))
+                elif len(line_tokens) == 4:
+                    s.add_value((line_tokens[1], float(line_tokens[3])))
+                elif line == '':
+                    g.add_sample(s)
+                else:
+                    print("ERROR: Unexpected line")
+
+        return g
 
     def parse_cuvette_block(self, block):
         """ Parse a Cuvette block """
@@ -260,7 +338,7 @@ class Experiment(object):
 
                 info_read = True
 
-                P = Plate(num_wells=info['num_wells'])
+                P = SMPPlate(num_wells=info['num_wells'])
                 P.info = info
                 P.info['raw'] = info_raw
 
@@ -283,7 +361,7 @@ class Experiment(object):
                 line_tokens = line.split('\t')
 
                 if len(line_tokens) >= 2 and (line_tokens[0] or line_tokens[1]):
-                    R = PlateRead(P)
+                    R = SMPPlateRead(P)
                     data = []
                     data_row_num = 1
                     bad_data = False
@@ -350,7 +428,7 @@ class Experiment(object):
                             self.cuvettes[cuvette] = cuvette
                         elif m.group(1) == 'Group':
                             group = self.parse_group_block(b)
-                            self.groups.append(group)
+                            self.groups[group.name] = group
                     else:
                         print("ERROR: Invalid block type")
 
