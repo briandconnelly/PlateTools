@@ -45,13 +45,43 @@ class Read(object):
         self.data = None
         self.info = {}
 
-    def csv(self, fp=sys.stdout, delimiter=','):
-        """ Print well data in CSV format """
+    def csv(self, fp=sys.stdout, delimiter=',', transpose=False):
+        """ Print well data in CSV format
+        
+        Parameters:
+        
+        fp:
+            A file descriptor to print to
+        delimiter
+            The delimiter character for the outputted CSV (default: ',')
+        transpose
+            Whether or not to first transpose the data (default: False)
+
+        """
         writer = csv.writer(fp, delimiter=delimiter)
-        for row in self.data:
+        
+        if transpose:
+            data = numpy.transpose(self.data)
+        else:
+            data = self.data
+
+        for row in data:
             writer.writerow(row)
 
-    def pretty(self, fp=sys.stdout):
-        """ Print a nice representation of the read """
+    def pretty(self, fp=sys.stdout, transpose=False):
+        """ Print a nice representation of the read
+
+        Parameters:
+
+        fp:
+            A file descriptor to print to
+        transpose
+            Whether or not to first transpose the data (default: False)
+
+        """
         # TODO: implement
+        if transpose:
+            data = numpy.transpose(self.data)
+        else:
+            data = self.data
         pass

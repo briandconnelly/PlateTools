@@ -14,6 +14,7 @@ from PlateTools.Plate import *
 class SMPNote(object):
     def __init__(self, note):
         self.note = note
+
     def __str__(self):
         return self.note
 
@@ -22,15 +23,18 @@ class SMPGroupSample(object):
         self.name = name
         self.group = group
         self.values = []
+
     def __str__(self):
         num_values = len(self.values)
         valstring = "value"
         if num_values != 1:
             valstring += 's'
         return "Group '{gn}' Sample '{sn}' with {v} {vs}".format(gn=self.group.name, sn=self.name, v=num_values, vs=valstring)
+
     def add_value(self, val_tuple):
         self.values.append(val_tuple)
-    def print_information(self):
+
+    def print_data(self):
         allvals = []
 
         print(self)
@@ -47,15 +51,32 @@ class SMPGroup(object):
     def __init__(self, name):
         self.name = name
         self.samples = []
+
     def __str__(self):
         num_samples = len(self.samples)
         samplestring = "sample"
         if num_samples != 1:
             samplestring += 's'
         return "Group '{g}' with {s} {ss}".format(g=self.name, s=num_samples, ss=samplestring)
+
     def add_sample(self, sample):
         self.samples.append(sample)
+
     def print_information(self):
+        print(self)
+        for s in self.samples:
+            sample_wells = [well for (well, value) in s.values]
+            num_values = len(s.values)
+            valstring = "values"
+            if num_values != 1:
+                valstring += 's'
+            print("\tSample '{sn}' with {v} {vs} from wells {wells}".format(sn=s.name,
+                                                                            v=num_values,
+                                                                            vs=valstring,
+                                                                            wells=', '.join(sample_wells)))
+        print("")
+
+    def print_data(self):
         print(self)
         for s in self.samples:
             num_values = len(s.values)
@@ -124,10 +145,10 @@ class SMPPlate(Plate):
 
     def __str__(self):
         num_reads = len(self.reads)
-        s = "'{0}': {1} data with {2} {3} read".format(self.info['name'],
-                                                       self.info['data_mode'],
-                                                       num_reads,
-                                                       self.info['read_type'])
+        s = "Plate '{0}': {1} data with {2} {3} read".format(self.info['name'],
+                                                             self.info['data_mode'],
+                                                             num_reads,
+                                                             self.info['read_type'])
         if num_reads != 1: s += 's'
         return s
 
