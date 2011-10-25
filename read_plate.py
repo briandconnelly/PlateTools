@@ -18,11 +18,11 @@ def main():
     parser = argparse.ArgumentParser(description='Interact with data from a SoftMax(R) Pro experiment file',
                                      epilog='SoftMax is a registered trademark of Molecular Devices, LLC.')
     parser.add_argument('infile', type=argparse.FileType('rb'), help='read data from given file')
-    parser.add_argument('-c', '--cuvette', nargs='+', help='use specific cuvette(s)', default=None)
-    parser.add_argument('-g', '--group', nargs='+', help='use specific group(s)', default=None)
+    parser.add_argument('-c', '--cuvette', action='append', help='use specific cuvette(s)', default=None)
+    parser.add_argument('-g', '--group', action='append', help='use specific group(s)', default=None)
     parser.add_argument('-i', '--info', action='store_true', default=False, help='display information about the experiment or selected plate/cuvette')
     parser.add_argument('-o', '--outfile', type=argparse.FileType('w'), default=sys.stdout, help='write data to given file')
-    parser.add_argument('-p', '--plate', nargs='+', help='use specific plate(s)', default=None)
+    parser.add_argument('-p', '--plate', action='append', help='use specific plate(s)', default=None)
     parser.add_argument('-P', '--pretty', action='store_true', default=False, help='display read data as a formatted table')
     parser.add_argument('-T', '--transpose', action='store_true', default=False, help='transpose resulting data')
     parser.add_argument('-v', '--version', action='version', version='%(prog)s {0}'.format(__version__))
@@ -37,7 +37,6 @@ def main():
             for p in args.plate:
                 try:
                     p = experiment.plates[p]
-                    p.print_information()
                 except KeyError as err:
                     print("Error: Plate '{0}' does not exist in experiment".format(p))
                 else:

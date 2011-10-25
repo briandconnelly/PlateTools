@@ -132,11 +132,13 @@ class SMPPlate(Plate):
         return s
 
     def print_information(self):
+        print(self)
         for k, v in self.info_fields.iteritems():
             try:
-                print("{desc}: {val}".format(desc=v, val=self.info[k]))
+                print("\t{desc}: {val}".format(desc=v, val=self.info[k]))
             except KeyError as err:
-                print("{desc}: Unknown".format(desc=v))
+                print("\t{desc}: Unknown".format(desc=v))
+        print("")
 
 class Cuvette(object):
     def __init__(self):
