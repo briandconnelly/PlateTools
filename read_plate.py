@@ -11,7 +11,6 @@ import argparse
 import numpy
 import sys
 
-
 def main():
     parser = argparse.ArgumentParser(description='Interact with data from a SoftMax(R) Pro experiment file',
                                      epilog='SoftMax is a registered trademark of Molecular Devices, LLC.')
@@ -45,10 +44,13 @@ def main():
                 try:
                     target_plates.append(experiment.plates[p])
                 except KeyError as err:
-                    print("Error: Plate '{0}' does not exist in experiment".format(p))
+                    if p.lower() == "all":
+                        target_plates = list(experiment.plates.values())
+                    else:
+                        print("Error: Plate '{0}' does not exist in experiment".format(p))
+            target_plates = set(target_plates)
         else:
-            for k, v in experiment.plates.iteritems():
-                target_plates.append(v)
+            target_plates = list(experiment.plates.values())
 
         target_cuvettes = []
         if args.cuvette and len(args.cuvette) > 0:
@@ -58,10 +60,13 @@ def main():
                 try:
                     target_cuvettes.append(experiment.plates[c])
                 except KeyError as err:
-                    print("Error: Cuvette '{0}' does not exist in experiment".format(c))
+                    if c.lower() == "all":
+                        target_cuvettes = list(experiment.cuvettes.values())
+                    else:
+                        print("Error: Cuvette '{0}' does not exist in experiment".format(c))
+            target_cuvettes = set(target_cuvettes)
         else:
-            for k, v in experiment.cuvettes.iteritems():
-                target_cuvettes.append(v)
+            target_cuvettes = list(experiment.cuvettes.values())
 
         target_groups = []
         if args.group and len(args.group) > 0:
@@ -70,15 +75,20 @@ def main():
                 try:
                     target_groups.append(experiment.groups[g])
                 except KeyError as err:
-                    print("Error: Group '{0}' does not exist in experiment".format(g))
+                    if g.lower() == "all":
+                        target_groups = list(experiment.groups.values())
+                    else:
+                        print("Error: Group '{0}' does not exist in experiment".format(g))
+            target_groups = set(target_groups)
         else:
-            for k, v in experiment.groups.iteritems():
-                target_groups.append(v)
+            target_groups = list(experiment.groups.values())
 
 
         if not plates_specified and not cuvettes_specified and not groups_specified:
+            num_notes = len(experiment.notes)
+            print('{0}: {1}'.format('Number of Notes', num_notes))
             for n in experiment.notes:
-                print('{0}: {1}'.format('Note', n))
+                print('\t* {0}: {1}'.format('Note', n))
 
             num_plates = len(experiment.plates)
             print('{0}: {1}'.format('Number of Plates', num_plates))

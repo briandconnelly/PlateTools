@@ -45,6 +45,22 @@ class Read(object):
         self.data = None
         self.info = {}
 
+    def well_values(self, coords):
+        """ Retrieve the values at the given wells
+
+        Parameters:
+
+        coords
+            A list of (row,column) tuples
+
+        """
+
+        results = []
+        for c in coords:
+            results.append(self.data[c[0]][c[1]])
+
+        return results
+
     def csv(self, fp=sys.stdout, delimiter=',', transpose=False):
         """ Print well data in CSV format
         
@@ -79,9 +95,9 @@ class Read(object):
             Whether or not to first transpose the data (default: False)
 
         """
-        # TODO: implement
+
         if transpose:
             data = numpy.transpose(self.data)
         else:
             data = self.data
-        pass
+        # TODO: implement

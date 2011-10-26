@@ -104,7 +104,7 @@ class SMPPlateRead(Read):
         self.data = None
 
     def __str__(self):
-        return "Read of plate '{0}': Time={1}, Temperature={2}".format(self.plate.name,
+        return "Read of plate '{0}': Time={1}, Temperature={2}".format(self.plate.info['name'],
                                                                        self.info['time'],
                                                                        self.info['temperature'])
 
@@ -182,10 +182,34 @@ class Experiment(object):
         return "Experiment [{0} Notes], {1} Plates, {2} Cuvettes".format(len(self.notes), len(self.plates), len(self.cuvettes))
 
     def plate_names(self):
-        return [p.info['name'] for p in self.plates]
+        return self.plates.keys()
 
     def cuvette_names(self):
-        return [p.name for p in self.cuvettes]
+        return self.cuvettes.keys()
+
+    def get_plate(self, name):
+        try:
+            p = self.plates[name]
+        except KeyError as err:
+            p = None
+
+        return p
+
+    def get_cuvette(self, name):
+        try:
+            c = self.cuvettes[name]
+        except KeyError as err:
+            c = None
+
+        return c
+
+    def get_group(self, name):
+        try:
+            g = self.groups[name]
+        except KeyError as err:
+            g = None
+
+        return g
 
     def read_block(self, fp):
         block_lines = []
@@ -441,8 +465,9 @@ class Experiment(object):
                     m = re.match('^(Note|Plate|Cuvette|Group)', b[0])
                     if m:
                         if m.group(1) == 'Note':
-                            note = self.parse_note_block(b)
-                            self.notes.append(note)
+                            if b != 'Note:':
+                                note = self.parse_note_block(b)
+                                self.notes.append(note)
                         elif m.group(1) == 'Plate':
                             plate = self.parse_plate_block(b)
                             self.plates[plate.info['name']] = plate

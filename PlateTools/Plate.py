@@ -13,6 +13,8 @@ __author__ = "Brian Connelly <bdc@msu.edu>"
 __credits__ = "Brian Connelly"
 
 from math import sqrt
+import re
+import string
 
 from PlateTools.Read import *
 
@@ -74,3 +76,33 @@ class Plate(object):
     def num_reads(self):
         """ Return the number of reads for this plate """
         return len(self.reads)
+
+    def get_well_index(self, wells):
+
+        """ For each of the given wells, return its location as a (row, column)
+        tuple
+
+        Parameters:
+
+        wells
+            A list of wells, specified as e.g. 'A4', 'G10'
+
+        """
+
+        results = []
+        for w in wells:
+            m = re.match('^([A-ZA-z])([0-9]{1,2})$', w)
+            if m:
+                row = int(string.uppercase.find(m.group(1).upper()))
+                col = int(m.group(2))-1
+
+                if row >= self.num_rows or col >= self.num_columns:
+                    # TODO: throw exception
+                    print("ERROR: Invalid well '{w}'.  Skipping.".format(w=w))
+                else:
+                    results.append((row,col))
+
+            else:
+                print("ERROR: Invalid well '{w}'.  Skipping.".format(w=w))
+
+        return results
