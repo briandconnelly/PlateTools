@@ -8,8 +8,9 @@ import numpy
 from scipy import stats
 import re
 
-from PlateTools.Read import *
+from PlateTools.Experiment import *
 from PlateTools.Plate import *
+from PlateTools.Read import *
 
 class SMPNote(object):
     def __init__(self, note):
@@ -170,7 +171,7 @@ class Group(object):
     def __init__(self):
         pass
 
-class Experiment(object):
+class Experiment(Experiment):
     def __init__(self, fp):
         self.notes = []
         self.plates = {}

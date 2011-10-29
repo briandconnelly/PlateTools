@@ -28,8 +28,8 @@ def main():
     # Read in the experiment data
     try:
         experiment = SoftMaxPro.Experiment(args.infile)
-    except Execption as err:
-        print("ERROR: Could not read input file:", err)
+    except:
+        print("ERROR: Could not read input file")
         sys.exit(1)
     else:
         plates_specified = False
