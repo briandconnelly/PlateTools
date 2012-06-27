@@ -78,7 +78,6 @@ class Plate(object):
         return len(self.reads)
 
     def get_well_index(self, wells):
-
         """ For each of the given wells, return its location as a (row, column)
         tuple
 
@@ -104,5 +103,23 @@ class Plate(object):
 
             else:
                 print("ERROR: Invalid well '{w}'.  Skipping.".format(w=w))
+
+        return results
+
+    def get_well_names(self, well_indices):
+        """ For each of the given well indices, return it's well name (e.g. 'A4')
+
+        Parameters:
+
+        well_indices:
+            A list of well indices, specified as integers
+
+        """
+
+        results = []
+        for wi in well_indices:
+            well = "{r}{c}".format(r=chr(ord('A') + int(wi/self.num_columns)),
+                                   c=wi % self.num_columns)
+            results.append(well)
 
         return results

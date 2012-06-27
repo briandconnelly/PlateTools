@@ -19,6 +19,9 @@ class SMPNote(object):
     def __str__(self):
         return self.note
 
+    def __len__(self):
+        return len(self.note)
+
 class SMPGroupSample(object):
     def __init__(self, name, group):
         self.name = name

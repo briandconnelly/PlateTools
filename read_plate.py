@@ -1,4 +1,4 @@
-#!/usr/bin/env arch -i386 python
+#!/usr/bin/env python
 # TODO: change this line back to what it should be
 # -*- coding: utf-8 -*-
 

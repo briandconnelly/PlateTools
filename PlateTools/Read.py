@@ -46,7 +46,7 @@ class Read(object):
         self.info = {}
 
     def well_values(self, coords):
-        """ Retrieve the values at the given wells
+        """ Retrieve the values at the given wells as a numpy array
 
         Parameters:
 
@@ -59,7 +59,7 @@ class Read(object):
         for c in coords:
             results.append(self.data[c[0]][c[1]])
 
-        return results
+        return numpy.array(results)
 
     def csv(self, fp=sys.stdout, delimiter=',', transpose=False):
         """ Print well data in CSV format
