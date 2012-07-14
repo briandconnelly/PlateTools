@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-# TODO: format time to be HH:MM:SS.  What if there are days?? anything in manual?
-
 __author__ = "Brian Connelly <bdc@msu.edu>"
 __version__ = 0.1
 
@@ -35,8 +33,8 @@ def main():
                         default=sys.stdout, help='write data to given file')
     parser.add_argument('-p', '--plate', action='append', default=None,
                         help='use specific plate(s)')
-    parser.add_argument('-T', '--transpose', action='store_true', default=False,
-                        help='transpose resulting plate read data')
+#    parser.add_argument('-T', '--transpose', action='store_true', default=False,
+#                        help='transpose resulting plate read data')
     parser.add_argument('-v', '--version', action='version',
                         version='%(prog)s {0}'.format(__version__))
     args = parser.parse_args()
