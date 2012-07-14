@@ -420,7 +420,28 @@ class Experiment(Experiment):
                     data_row_num += 1
 
                 if len(line_tokens) >= 1 and line_tokens[0]:
-                    R.info['time'] = line_tokens[0]
+                    # Make sure the time format is HH:MM:SS
+                    pattern = '^\s*((?P<hour>[0-9]{1,2}):)?(?P<minute>[0-9]{1,2}):(?P<second>[0-9]{1,2})\s*$'
+
+                    m = re.search(pattern, line_tokens[0])
+                    if m:
+                        matches = m.groupdict()
+                        hour = minute = second = 0
+
+                        if matches['hour']:
+                            hour = int(matches['hour'])
+
+                        if matches['minute']:
+                            minute = int(matches['minute'])
+
+                        if matches['second']:
+                            second = int(matches['second'])
+
+                        R.info['time'] = "{h:02d}:{m:02d}:{s:02d}".format(h=hour, m=minute, s=second) 
+
+                    else:
+                        R.info['time'] = -1
+
 
                 if len(line_tokens) >= 2 and line_tokens[1]:
                     R.info['temperature'] = float(line_tokens[1])

@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 # TODO: format time to be HH:MM:SS.  What if there are days?? anything in manual?
-# TODO: add support for groups?
 
 __author__ = "Brian Connelly <bdc@msu.edu>"
 __version__ = 0.1
@@ -65,11 +64,6 @@ def main():
         else:
             target_plates = list(experiment.plates.values())
 
-        # TODO: if info specified, show it and quit
-        #num_plates = len(experiment.plates)
-        #print('{0}: {1}'.format('Number of Plates', num_plates))
-        #for k,v in experiment.plates.iteritems():
-        #    print("\t* {0}".format(v))
 
         if args.info:
             for p in target_plates:
@@ -109,9 +103,7 @@ def main():
                     if r.info['time'] == None:
                         read_time = "00:00:00"
                     else:
-                        # TODO: format this for HH:MM:SS (force hours)
                         read_time = r.info['time']
-
 
                     for row in range(r.data.shape[0]):
                         for col in range(r.data.shape[1]):
